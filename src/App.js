@@ -5,6 +5,7 @@ import "./App.css";
 
 function App() {
   const [books, setBooks] = useState([]);
+  const [covers, setCovers] = useState({});
 
   useEffect(() => {
     axios
@@ -12,6 +13,12 @@ function App() {
       .then(res => {
         console.log(res);
         setBooks(res.data.comics);
+        const { covers } = res.data;
+        const covObject = {};
+        for (let cover of covers) {
+          covObject[cover.diamond_id] = cover.url;
+        }
+        setCovers(covObject);
       })
       .catch(err => console.log(err));
   }, []);
@@ -19,7 +26,15 @@ function App() {
   return (
     <div className="App">
       {books.map(book => {
-        return <InfoBox {...book} key={book.diamond_id} />;
+        if (covers[book.diamond_id]) {
+          let url = covers[book.diamond_id];
+          let lastIndex = url.length - 1;
+          let thumb = url.slice(0, lastIndex);
+          let thumbnail = thumb + "3";
+          return <InfoBox {...book} cover_url={thumbnail} key={book.diamond_id} />;
+        } else {
+          return <InfoBox {...book} key={book.diamond_id} />;
+        }
       })}
     </div>
   );
