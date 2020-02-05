@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Paper } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import TopBar from "./components/TopBar/TopBar";
+import Book from "./components/Book/Book";
 import "./App.css";
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     justifyContent: "center"
-  },
-  paper: {
-    width: 100,
-    height: 140
-    // height: 140,
-    // width: 100
   },
   thumb: {
     width: 100,
@@ -70,13 +65,7 @@ function App() {
             url = getThumbUrl(url);
             return (
               <Grid item xsUp={12} key={url}>
-                <Paper url={url} className={classes.paper}>
-                  <img
-                    className={classes.thumb}
-                    src={url}
-                    alt="comic book cover"
-                  />
-                </Paper>
+                <Book url={url} book={book} />
               </Grid>
             );
           }
