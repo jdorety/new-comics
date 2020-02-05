@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper } from "@material-ui/core";
-
+import TopBar from "./components/TopBar/TopBar";
 import "./App.css";
 
 const useStyles = makeStyles(theme => ({
@@ -51,6 +51,7 @@ function App() {
 
   return (
     <div className="App">
+      <TopBar />
       {/* {books.map(book => {
         if (covers[book.diamond_id]) {
           let url = covers[book.diamond_id];
