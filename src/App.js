@@ -17,10 +17,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const getThumbUrl = url => {
+const getThumbUrl = (url, digit) => {
+  if (!url) return false;
   let lastIndex = url.length - 1;
   let thumb = url.slice(0, lastIndex);
-  return thumb + "3";
+  return thumb + digit.toString();
 };
 
 function App() {
@@ -61,11 +62,12 @@ function App() {
       <Grid container className={classes.root} spacing={2}>
         {books.map(book => {
           let url = covers[book.diamond_id];
+          url = getThumbUrl(url, 2);
           if (url) {
-            url = getThumbUrl(url);
+            let thumbnail = getThumbUrl(url, 3);
             return (
-              <Grid item xsUp={12} key={url}>
-                <Book url={url} book={book} />
+              <Grid item xl={12} key={url}>
+                <Book url={url} thumbnail={thumbnail} book={book} />
               </Grid>
             );
           }
