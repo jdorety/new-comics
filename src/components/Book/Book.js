@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-import Popover from "@material-ui/core/Popover";
+import Dialog from "@material-ui/core/Dialog";
+import Details from "./Details";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -11,51 +12,39 @@ const useStyles = makeStyles(theme => ({
   thumbnail: {
     width: 100,
     height: 140
-  }
+  },
 }));
 
 const Book = props => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [open, setOpen] = useState(false);
 
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
+  const handleClickOpen = () => {
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setOpen(false);
   };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   return (
     <div>
-      <Paper
-        aria-describedby={id}
-        className={classes.paper}
-        onClick={handleClick}
-      >
+      <Paper className={classes.paper} onClick={handleClickOpen}>
         <img
-          src={props.url}
+          src={props.thumbnail}
           className={classes.thumbnail}
           alt="comic book cover"
         />
       </Paper>
-      <Popover
-        id={id}
+      <Dialog
         open={open}
-        anchorEl={anchorEl}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: "center",
-          horizontal: "center"
-        }}
-        transformOrigin={{
-          vertical: "center",
-          horizontal: "center"
-        }}
-      ></Popover>
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        onClick={handleClose}
+      >
+      <Details  {...props.book} cover={props.url} />
+      </Dialog>
     </div>
   );
 };
