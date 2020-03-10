@@ -26,7 +26,9 @@ const getThumbUrl = (url, digit) => {
 
 function App() {
   const [books, setBooks] = useState([]);
+  const [display, setDisplay] = useState([]);
   const [covers, setCovers] = useState({});
+  const [publishers, setPublishers] = useState([]);
   const classes = useStyles();
 
   useEffect(() => {
@@ -35,6 +37,14 @@ function App() {
       .then(res => {
         console.log(res);
         setBooks(res.data.comics);
+        setDisplay(res.data.comics);
+        const pubsList = ["All"];
+        for (let comic of res.data.comics) {
+          if (!pubsList.includes(comic.publisher)) {
+            pubsList.push(comic.publisher);
+          }
+        }
+        setPublishers(pubsList);
         const { covers } = res.data;
         const covObject = {};
         for (let cover of covers) {
@@ -45,9 +55,19 @@ function App() {
       .catch(err => console.log(err));
   }, []);
 
+  const pubFilter = publisher => {
+    console.log(publisher);
+    if (publisher === "All") {
+      setDisplay(books);
+    } else {
+      const filtered = books.filter(book => book.publisher === publisher);
+      setDisplay(filtered);
+    }
+  };
+
   return (
     <div className="App">
-      <TopBar />
+      <TopBar publishers={publishers} filter={pubFilter} />
       {/* {books.map(book => {
         if (covers[book.diamond_id]) {
           let url = covers[book.diamond_id];
@@ -60,13 +80,13 @@ function App() {
         }
       })} */}
       <Grid container className={classes.root} spacing={2}>
-        {books.map(book => {
+        {display.map(book => {
           let url = covers[book.diamond_id];
           url = getThumbUrl(url, 2);
           if (url) {
             let thumbnail = getThumbUrl(url, 3);
             return (
-              <Grid item xl={12} key={url}>
+              <Grid item key={url}>
                 <Book url={url} thumbnail={thumbnail} book={book} />
               </Grid>
             );
