@@ -1,19 +1,36 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from "@material-ui/core/InputLabel";
 import TopBar from "./components/TopBar/TopBar";
 import Book from "./components/Book/Book";
 import "./App.css";
 
 const useStyles = makeStyles(theme => ({
   root: {
+    position: "relative",
+    top: 40,
     flexGrow: 1,
     justifyContent: "center"
   },
   thumb: {
     width: 100,
     height: 140
+  },
+  toolbar: {
+    position: "fixed",
+    left: 2,
+    top: 50,
+    flexGrow: 1,
+    zIndex: 2,
+    backgroundColor: "white"
+  },
+  tool: {
+    minWidth: 150
   }
 }));
 
@@ -29,6 +46,8 @@ function App() {
   const [display, setDisplay] = useState([]);
   const [covers, setCovers] = useState({});
   const [publishers, setPublishers] = useState([]);
+  const [pub, setPub] = useState("");
+
   const classes = useStyles();
 
   useEffect(() => {
@@ -38,13 +57,14 @@ function App() {
         console.log(res);
         setBooks(res.data.comics);
         setDisplay(res.data.comics);
-        const pubsList = ["All"];
+        const pubsList = [];
         for (let comic of res.data.comics) {
           if (!pubsList.includes(comic.publisher)) {
             pubsList.push(comic.publisher);
           }
+          comic.release_date = new Date(comic.release_date).toLocaleDateString()
         }
-        setPublishers(pubsList);
+        setPublishers(["All"].concat(pubsList.sort()));
         const { covers } = res.data;
         const covObject = {};
         for (let cover of covers) {
@@ -65,20 +85,30 @@ function App() {
     }
   };
 
+  const changeHandler = e => {
+    setPub(e.target.value);
+    pubFilter(e.target.value);
+  };
+
   return (
     <div className="App">
-      <TopBar publishers={publishers} filter={pubFilter} />
-      {/* {books.map(book => {
-        if (covers[book.diamond_id]) {
-          let url = covers[book.diamond_id];
-          let lastIndex = url.length - 1;
-          let thumb = url.slice(0, lastIndex);
-          let thumbnail = thumb + "3";
-          return <InfoBox {...book} cover_url={thumbnail} key={book.diamond_id} />;
-        } else {
-          return <InfoBox {...book} key={book.diamond_id} />;
-        }
-      })} */}
+      <TopBar />
+      <div className={classes.toolbar}>
+        <FormControl className={classes.tool}>
+          <InputLabel id="publisher-select-label">Publisher</InputLabel>
+          <Select
+            labelId="publisher-select-label"
+            value={pub}
+            onChange={changeHandler}
+          >
+            {publishers.map(pub => (
+              <MenuItem value={pub} key={pub}>
+                {pub}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
       <Grid container className={classes.root} spacing={2}>
         {display.map(book => {
           let url = covers[book.diamond_id];
