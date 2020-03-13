@@ -55,19 +55,26 @@ function App() {
       .get(`${process.env.REACT_APP_BACKEND_URL}/newcomics`)
       .then(res => {
         console.log(res);
+        // sets all books in state
         setBooks(res.data.comics);
+        // sets default display state of all books
         setDisplay(res.data.comics);
         const pubsList = [];
         for (let comic of res.data.comics) {
           if (!pubsList.includes(comic.publisher)) {
+            // add publisher to publisher list for filtering
             pubsList.push(comic.publisher);
           }
+          // convert release date to nice user-readable format
           comic.release_date = new Date(comic.release_date).toLocaleDateString()
         }
+        // include default "All" value for pub filtering
         setPublishers(["All"].concat(pubsList.sort()));
+        // grab covers array returned from backend
         const { covers } = res.data;
         const covObject = {};
         for (let cover of covers) {
+          // associate cover url with Diamond Id of comic book
           covObject[cover.diamond_id] = cover.url;
         }
         setCovers(covObject);
@@ -75,6 +82,10 @@ function App() {
       .catch(err => console.log(err));
   }, []);
 
+  /**
+   * Filters books displayed based on publisher.
+   * @param {string} publisher 
+   */
   const pubFilter = publisher => {
     console.log(publisher);
     if (publisher === "All") {
@@ -85,6 +96,7 @@ function App() {
     }
   };
 
+  // handles changing the publisher filter
   const changeHandler = e => {
     setPub(e.target.value);
     pubFilter(e.target.value);
