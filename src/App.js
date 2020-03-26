@@ -47,6 +47,7 @@ function App() {
   const [covers, setCovers] = useState({});
   const [publishers, setPublishers] = useState([]);
   const [pub, setPub] = useState("");
+  const [size, setSize] = useState("small");
 
   const classes = useStyles();
 
@@ -66,7 +67,9 @@ function App() {
             pubsList.push(comic.publisher);
           }
           // convert release date to nice user-readable format
-          comic.release_date = new Date(comic.release_date).toLocaleDateString()
+          comic.release_date = new Date(
+            comic.release_date
+          ).toLocaleDateString();
         }
         // include default "All" value for pub filtering
         setPublishers(["All"].concat(pubsList.sort()));
@@ -84,7 +87,7 @@ function App() {
 
   /**
    * Filters books displayed based on publisher.
-   * @param {string} publisher 
+   * @param {string} publisher
    */
   const pubFilter = publisher => {
     console.log(publisher);
@@ -129,7 +132,12 @@ function App() {
             let thumbnail = getThumbUrl(url, 3);
             return (
               <Grid item key={url}>
-                <Book url={url} thumbnail={thumbnail} book={book} />
+                {size === "med" && (
+                  <Book url={url} thumbnail={thumbnail} med book={book} />
+                )}
+                {size === "small" && (
+                  <Book url={url} thumbnail={thumbnail} book={book} />
+                )}
               </Grid>
             );
           }
