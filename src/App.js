@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+import Grid from "@material-ui/core/Grid";
 import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import TopBar from "./components/TopBar/TopBar";
 import Book from "./components/Book/Book";
 import "./App.css";
@@ -23,11 +25,15 @@ const useStyles = makeStyles(theme => ({
   },
   toolbar: {
     position: "fixed",
-    left: 2,
-    top: 50,
+    top: 56,
     flexGrow: 1,
+    display: "flex",
+    justifyContent: "space-around",
     zIndex: 2,
-    backgroundColor: "white"
+    backgroundColor: "white",
+    maxWidth: 1200,
+    width: "100%",
+    padding: 10
   },
   tool: {
     minWidth: 150
@@ -47,6 +53,7 @@ function App() {
   const [covers, setCovers] = useState({});
   const [publishers, setPublishers] = useState([]);
   const [pub, setPub] = useState("");
+  const [size, setSize] = useState("small");
 
   const classes = useStyles();
 
@@ -66,7 +73,9 @@ function App() {
             pubsList.push(comic.publisher);
           }
           // convert release date to nice user-readable format
-          comic.release_date = new Date(comic.release_date).toLocaleDateString()
+          comic.release_date = new Date(
+            comic.release_date
+          ).toLocaleDateString();
         }
         // include default "All" value for pub filtering
         setPublishers(["All"].concat(pubsList.sort()));
@@ -84,7 +93,7 @@ function App() {
 
   /**
    * Filters books displayed based on publisher.
-   * @param {string} publisher 
+   * @param {string} publisher
    */
   const pubFilter = publisher => {
     console.log(publisher);
@@ -94,6 +103,10 @@ function App() {
       const filtered = books.filter(book => book.publisher === publisher);
       setDisplay(filtered);
     }
+  };
+
+  const sizeHandler = size => {
+    setSize(size);
   };
 
   // handles changing the publisher filter
@@ -120,6 +133,14 @@ function App() {
             ))}
           </Select>
         </FormControl>
+        <ButtonGroup
+          variant="contained"
+          color="primary"
+          aria-label="contained primary button group"
+        >
+          <Button onClick={() => sizeHandler("small")}>Small</Button>
+          <Button onClick={() => sizeHandler("med")}>Medium</Button>
+        </ButtonGroup>
       </div>
       <Grid container className={classes.root} spacing={2}>
         {display.map(book => {
@@ -129,7 +150,12 @@ function App() {
             let thumbnail = getThumbUrl(url, 3);
             return (
               <Grid item key={url}>
-                <Book url={url} thumbnail={thumbnail} book={book} />
+                {size === "med" && (
+                  <Book url={url} thumbnail={thumbnail} med book={book} />
+                )}
+                {size === "small" && (
+                  <Book url={url} thumbnail={thumbnail} book={book} />
+                )}
               </Grid>
             );
           }
