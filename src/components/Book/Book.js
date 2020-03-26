@@ -37,10 +37,13 @@ const Book = props => {
 
   return (
     <div>
-      <Paper className={classes.medPaper} onClick={handleClickOpen}>
+      <Paper
+        className={props.med ? classes.medPaper : classes.smallPaper}
+        onClick={handleClickOpen}
+      >
         <img
           src={props.thumbnail}
-          className={classes.medThumbnail}
+          className={props.med ? classes.medThumbnail : classes.smallThumbnail}
           alt="comic book cover"
         />
       </Paper>
